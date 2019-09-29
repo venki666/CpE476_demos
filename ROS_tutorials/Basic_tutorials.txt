@@ -1,0 +1,111 @@
+Turtlesim Tutorials:
+
+Be sure that the turtlesim package is loaded on your system. Open a terminal
+window and try the following commands:
+$ rospack find turtlesim
+output:
+opt/ros/kinetic/share/turtlesim
+$ rosls turtlesim
+output:
+cmake images msg package.xml srv
+Read the package.xml, look at the images. srv directory has services
+$ pwd
+(Show working directory – not at turtlesim)
+$ roscd turtlesim
+/opt/ros/kinect/share/turtlesim
+Starting Turtlesim:
+$ roscore
+
+$ rosrun turtlesim turtlesim_node
+
+
+ROS Nodes with Turtlesim:
+
+$ rosnode list
+
+$ rosnode info /turtlesim
+
+TURTLESIM NODE TOPICS AND MESSAGES:
+
+$ rostopic type /turtle1/color_sensor
+
+$ rosmsg show turtlesim/Color
+
+$ rostopic echo /turtle1/color_sensor
+
+ROS PARAMETER SERVER
+
+$ rosparam list
+
+rosparam get turtlesim parameters
+$ rosparam get /
+
+Change Color:
+$ rosparam set background_b 0
+$ rosparam set background_g 0
+$ rosparam set background_r 255
+$ rosservice call /clear
+
+$rosparam get /
+
+
+ROS SERVICES TO MOVE TURTLE
+
+$ rosservice call /turtle1/teleport_absolute 1 1 0
+
+$ rosservice call /turtle1/teleport_relative 1 0
+
+
+TURTLESIM NODE TOPIC POSE
+
+$ rostopic info /turtle1/pose
+
+$ rostopic type /turtle1/pose
+
+$ rosmsg show turtlesim/Pose
+
+$ rostopic type /turtle1/cmd_vel | rosmsg show
+
+
+MOVE TURTLE ONCE
+
+$ rostopic pub -1 /turtle1/cmd_vel geometry_msgs/Twist -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, 1.8]'
+
+Get turtle pose?
+$ rostopic echo /turtle1/pose
+
+Move turtle in a circle:
+
+$ rostopic pub /turtle1/cmd_vel geometry_msgs/Twist -r 1 -- '[2.0, 0.0,0.0]' '[0.0, 0.0, 1.8]'
+
+Publish pose?
+$ rostopic hz /turtle1/pose
+
+PLOT using rqt_plot
+
+$ rqt_plot
+
+$ rqt_plot /turtle1/pose/x:y:z
+$ rqt_plot /turtle1/pose/x /turtle1/pose/y /turtle1/pose/z
+
+
+ENABLE KEYBOARD CONTROL OF TURTLE
+
+$ rosrun turtlesim turtle_teleop_key
+
+Analyise the Nodes:
+
+$ rosnode list
+
+$ rosnode info /teleop_turtle
+
+$ rosnode info /turtlesim
+
+USING rqt_graph
+
+$ rqt_graph
+
+
+
+
+
