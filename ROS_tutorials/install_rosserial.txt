@@ -1,0 +1,47 @@
+Installing the ROS package that passes the serial messages on to ROS Master.
+
+Simply run:
+
+sudo apt-get install ros-kinetic-rosserial-arduino
+sudo apt-get install ros-kinetic-rosserial
+
+2. Installing the ROSlib for the arduino:
+
+For this, navigate in ‘Terminal’ to the libraries folder of the Arduino IDE, this is usually located at:
+
+/home/Arduino/libraries 
+
+and then run,
+
+rosrun rosserial_arduino make_libraries.py .
+
+That dot at the end is important, it specifies the installation path. Which is the current path in the terminal.
+
+A new folder will appear, ‘ros_lib’ which contains all that is needed for the Arduino part.
+
+Test Run !
+The steps arre:
+
+    In the Arduino IDE go to: File/Examples/ros_lib/HelloWorld.
+    upload this Sketch to the Arduino, if you get an avr_dude() error, use this link. :)
+    In ‘Terminal’, launch ROS Master with,
+
+roscore
+
+4. in a new ‘Terminal’ window, run the ROS node that passes on the serial data, type and run
+
+rosrun rosserial_python serial_node.py /dev/ttyACM0
+
+you should change ‘/dev/ttyACM0’ to whatever port your Arduino is connected on.
+
+5. listening in on the topics. We can list the topics in yet another ‘Terminal’ window using
+
+rostopic list
+
+You should see the ‘/chatter’ topic in the list. we can see the messages published on this topic using,
+
+rostopic echo /chatter
+
+Done!
+
+You should see the message ‘hello world!’ being printed out again and again.

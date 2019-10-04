@@ -49,6 +49,7 @@ $ rosservice call /clear
 $rosparam get /
 
 
+
 ROS SERVICES TO MOVE TURTLE
 
 $ rosservice call /turtle1/teleport_absolute 1 1 0
@@ -104,6 +105,26 @@ $ rosnode info /turtlesim
 USING rqt_graph
 
 $ rqt_graph
+
+
+CPP turtlesim  turtlesim_cleaner_node Example
+
+$ roscore
+
+$ rosrun turtlesim turtlesim_node
+
+$ rosrun turtlesim turtle_teleop_key 
+
+$ rosrun turtlesim_cleaner turtlesim_cleaner_node
+
+ 
+ROS Publisher (talker) and Subscriber (listener) cpp Example
+
+$ roscore
+
+$ rosrun ros_pubsub_tutorial talker
+
+$ rosrun ros_pubsub_tutorial listener
 
 
 

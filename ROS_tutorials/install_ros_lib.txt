@@ -1,0 +1,204 @@
+Ubuntu 16.04, ROS Kinetic, Arduino 1.8.5:
+
+$ sudo apt-get update
+
+Install newest version of Arduino from: https://www.arduino.cc/en/Guide/Linux , download page : https://www.arduino.cc/en/Main/Software .
+
+ROS and Arduino Compatibility:
+
+$ sudo apt-get install ros-kinetic-rosserial-arduino
+$ sudo apt-get install ros-kinetic-rosserial
+
+To Install the ros_lib library in my Arduino folder which was built automatically (you may know it as /sketchbook):
+
+$ cd Arduino/libraries/
+$ rosrun rosserial_arduino make_libraries.py .
+
+Installing from Source onto the ROS workstation
+Rosserial has been catkin-ized since the groovy release, and the workflow is a bit different from fuerte and earlier releases. Rather than running the library generator over each package you want to use, you run it once and generate libraries for all installed messages. In the instructions below, <ws> represents your catkin workspace.
+
+  cd <ws>/src
+  git clone https://github.com/ros-drivers/rosserial.git
+  cd <ws>
+  catkin_make
+
+These commands clone rosserial from the github repository, generate the rosserial_msgs needed for communication, and make the ros_lib library in the <ws>/install directory.
+
+
+Hello World: Creating a Publisher
+
+The Code
+
+We'll start our exploration into rosserial by creating a "hello world" program for our Arduino. (Note: the Arduino community often calls source code for programs a "sketch", we will use the same convention below). If you have followed the Arduino IDE Setup tutorial, you'll be able to open the sketch below by choosing ros_lib -> HelloWorld from the Arduino examples menu. 
+
+Running the Code
+
+Now, launch the roscore in a new terminal window:
+
+roscore
+
+Next, run the rosserial client application that forwards your Arduino messages to the rest of ROS. Make sure to use the correct serial port:
+
+rosrun rosserial_python serial_node.py /dev/ttyUSB0
+
+Alternatively, if you want the ability to programmatically reset your Arduino, run using:
+
+rosrun rosserial_arduino serial_node.py _port:=/dev/ttyUSB0
+
+This will automatically provide a service endpoint at ~reset_arduino that you can call which will have the same effect as pressing the Arduino's reset button.
+
+Finally, watch the greetings come in from your Arduino by launching a new terminal window and entering:
+
+rostopic echo chatter
+
+Blink: Creating a Subscriber
+
+The Code
+
+Now that we've created a ROS publisher in the previous tutorial, we'll create a subscriber. If you have followed the Arduino IDE Setup tutorial, you'll be able to open the sketch below by choosing ros_lib -> Blink from the Arduino examples menu. 
+
+Running the Code
+
+Now, launch the roscore in a new terminal window:
+
+roscore
+
+Next, run the rosserial client application that forwards your Arduino messages to the rest of ROS. Make sure to use the correct serial port:
+
+rosrun rosserial_python serial_node.py /dev/ttyUSB0
+
+Finally, you can toggle the LED using rostopic:
+
+rostopic pub toggle_led std_msgs/Empty --once
+
+Logging
+
+Like any ROS node, you can log messages at the appropriate verbosity level. rosserial forwards the string to the standard ROS network and outputs to rosout and to its log file. 
+
+Running the Code
+
+Now, launch the roscore in a new terminal window:
+
+roscore
+
+Next, run the rosserial client application that forwards your Arduino messages to the rest of ROS. Make sure to use the correct serial port:
+
+rosrun rosserial_python serial_node.py /dev/ttyUSB0
+
+You should be able to see all the log messages in the same terminal that you used to run the serial node. 
+
+Using Time and TF on the Arduino
+
+The rosserial_arduino package contains libraries for generating timestamps on the Arduino which are synchronized with the PC/Tablet on which the roscore instance is running. This tutorial shows how to access time, using an example of publishing a tf transform.
+
+The Code
+
+If you have followed the Arduino IDE Setup tutorial, you'll be able to open the sketch below by choosing ros_lib -> TimeTf from the Arduino examples menu. 
+
+Running the Code
+
+Now, launch the roscore in a new terminal window:
+
+roscore
+
+Next, run the rosserial client application that forwards your Arduino messages to the rest of ROS. Make sure to use the correct serial port:
+
+rosrun rosserial_python serial_node.py /dev/ttyUSB0
+
+Finally, you can check the transform using:
+
+rosrun tf tf_echo odom base_link
+
+This by default will echo the transform being sent from the Arduino approximately once per second. Note that the Arduino is likely broadcasting at a higher rate (Mega2560 publishes at about 57hz when connected at 57600)
+
+Or, by running:
+
+rosrun tf view_frames
+
+This last command will run for about 5 seconds and generate a 'frames.pdf' file in the directory you ran the command in.
+
+
+CMake with rosserial_arduino
+Description: This tutorial shows how to use the CMake build system with rosserial_arduino.
+
+Making Your Project
+
+Starting your rosserial_arduino project is just like creating any other package. In your catkin workspace's src folder:
+
+catkin_create_pkg helloworld rosserial_arduino rosserial_client std_msgs
+
+As usual, use catkin_create_pkg to create a package named helloworld. You must depend on rosserial_arduino for the Arduino toolchain, and on rosserial_client for client library generation macros. And finally, since we are going to use std_msgs/String messages, you must depend on std_msgs. 
+
+Source Code
+
+Copy the the source code below and make a file called firmware/chatter.cpp in your helloworld package.
+
+Toggle line numbers
+
+   1 #include <ros.h>
+   2 #include <std_msgs/String.h>
+   3 
+   4 #include <Arduino.h>
+   5 
+   6 ros::NodeHandle nh;
+   7 
+   8 std_msgs::String str_msg;
+   9 ros::Publisher chatter("chatter", &str_msg);
+  10 
+  11 char hello[13] = "hello world!";
+  12 
+  13 void setup()
+  14 {
+  15   nh.initNode();
+  16   nh.advertise(chatter);
+  17 }
+  18 
+  19 void loop()
+  20 {
+  21   str_msg.data = hello;
+  22   chatter.publish( &str_msg );
+  23   nh.spinOnce();
+  24   delay(1000);
+  25 }
+
+This program is almost exactly the same as the hello world covered in the Publisher Tutorial. 
+
+we actually need a second CMakeLists.txt, and that's the one for the firmware subproject. Create the file firmware/CMakeLists.txt in your package, with the following contents:
+
+Toggle line numbers
+
+   1 cmake_minimum_required(VERSION 2.8.3)
+   2 
+   3 include_directories(${ROS_LIB_DIR})
+   4 
+   5 # Remove this if using an Arduino without native USB (eg, other than Leonardo)
+   6 add_definitions(-DUSB_CON)
+   7 
+   8 generate_arduino_firmware(hello
+   9   SRCS chatter.cpp ${ROS_LIB_DIR}/time.cpp
+  10   BOARD leonardo
+  11   PORT /dev/ttyACM0
+  12 )
+
+
+Build & Test
+
+Using catkin_make
+
+The firmware should build by default when you run catkin_make, but you can also specify it explicitly:
+
+catkin_make helloworld_firmware_hello
+
+Now connect an Arduino Leonardo, confirm that it comes up as /dev/ttyACM0 (or change the firmware's CMakeLists.txt accordingly), and program it:
+
+catkin_make helloworld_firmware_hello-upload
+
+Testing
+
+Now you can use the Arduino! Launch the following in separate terminals to see it in action:
+
+roscore
+
+rosrun rosserial_python serial_node.py /dev/ttyACM0
+
+rostopic echo chatter

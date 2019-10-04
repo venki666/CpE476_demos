@@ -1,0 +1,17 @@
+Once you have Ubuntu 16.04.2 LTS, install to install ROS Kinetic:
+
+    sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+    sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116 or alternatively wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+    sudo apt-get update
+    sudo apt-get install ros-kinetic-desktop
+    sudo apt-get install rosbash
+        If this installation fails due to conflicts between dependencies of packages which are no longer installed but whose dependency remained after the Ubuntu upgrade, remove the old dependency with the command dpgk -r PACKAGE. 
+
+Continue with the installation of the latest production version of Gazebo (gazebo7 is part of ROS Kinetic):
+
+    sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+    wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+    sudo apt-get update
+    sudo apt-get install ros-kinetic-gazebo-ros-pkgs 
+
+
