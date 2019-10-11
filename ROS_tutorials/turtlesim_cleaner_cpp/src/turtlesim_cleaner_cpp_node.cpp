@@ -102,7 +102,7 @@ int main(int argc, char **argv)
 
 
 	loop.sleep();
-	//spiralClean();
+	spiralClean();
 
 	ros::spin();
 
