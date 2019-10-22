@@ -1,0 +1,1 @@
+avrdude -v -p atmega32u4 -c$(PROG) -P /dev/ttyACM0 -b 57600 -U flash:w:main.out:i 
