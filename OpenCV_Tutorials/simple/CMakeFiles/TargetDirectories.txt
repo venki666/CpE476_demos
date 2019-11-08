@@ -1,0 +1,3 @@
+/home/venkim/Downloads/OPENCV_ex/simple/CMakeFiles/edit_cache.dir
+/home/venkim/Downloads/OPENCV_ex/simple/CMakeFiles/rebuild_cache.dir
+/home/venkim/Downloads/OPENCV_ex/simple/CMakeFiles/ImageLoads.dir
