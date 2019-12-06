@@ -1,0 +1,19 @@
+<launch>
+
+
+    <node name="arduinoDriver" pkg="rosserial_python" type="serial_node.py" args="_port:=/dev/ttyACM0" />
+
+
+    <rosparam command="load" file="$(find ardupi_robot_romi)/launch/robotParameters.yaml" />
+
+    <node name="wheelSpeedFilter" pkg="ardupi_robot_romi" type="wheelSpeedFilter.py" output="screen"/>
+
+    <node name="wheelPID" pkg="ardupi_robot_romi" type="wheelPID.py" output="screen" />
+  
+    <node name="odometry" pkg="ardupi_robot_romi" type="odometry.py" output="screen" />
+   
+    <node name="controlPosition" pkg="ardupi_robot_romi" type="controlPosition.py" output="screen" />
+    
+    <node name="controlAllocation" pkg="ardupi_robot_romi" type="controlAllocation.py" output="screen" />
+
+</launch>
