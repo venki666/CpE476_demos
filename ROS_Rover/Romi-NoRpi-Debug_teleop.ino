@@ -15,8 +15,8 @@ float _debug_linear_ms = 0.0;
 float _debug_angle_rs = 0.0;
 
 void messageCb( const geometry_msgs::Twist& msg){
-  _debug_linear_ms = msg.angular.z;
-  _debug_angle_rs = msg.linear.x;
+  _debug_angle_rs = msg.angular.z;
+  _debug_linear_ms = msg.linear.x;
 }
 ros::Subscriber<geometry_msgs::Twist> sub("cmd_vel", &messageCb );
 
