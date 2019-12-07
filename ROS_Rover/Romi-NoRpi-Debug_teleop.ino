@@ -20,12 +20,12 @@ void messageCb( const geometry_msgs::Twist& msg){
 }
 ros::Subscriber<geometry_msgs::Twist> sub("cmd_vel", &messageCb );
 
-/* 
+ 
 void _DEBUG_PID_CONTROL() {
-  static float _linear_ms_change = 0.1;
+  //static float _linear_ms_change = 0.1;
   set_twist_target(_debug_linear_ms, _debug_angle_rs);
 }
-*/
+
 void setup() {
   Serial.begin(57600);
   set_twist_target(_debug_linear_ms, _debug_angle_rs);
