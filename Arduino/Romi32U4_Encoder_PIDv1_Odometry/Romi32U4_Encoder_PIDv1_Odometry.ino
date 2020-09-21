@@ -168,27 +168,27 @@ void setMotorSpeeds(int speedLeft, int speedRight)
   // get speed command from PID controllers
   //int speedCmdLeft = PIDLeft.getCmdAutoStep(speedLeft, odometer.getSpeedLeft());
   OdoSpeedLeft = odometer.getSpeedLeft();
-  if(abs(SpeedLeft - OdoSpeedLeft) < accelMax)
+  if(abs(speedLeft - OdoSpeedLeft) < accelMax)
    PIDLeft.SetTunings(consKp, consKi, consKd);
   else 
    PIDLeft.SetTunings(aggKp, aggKi, aggKd);
   PIDLeft.Compute();
   //int speedCmdRight = PIDRight.getCmdAutoStep(speedRight, odometer.getSpeedRight());
   OdoSpeedRight = odometer.getSpeedRight();
-    if(abs(SpeedRight - OdoSpeedRight) < accelMax)
+    if(abs(speedRight - OdoSpeedRight) < accelMax)
    PIDRight.SetTunings(consKp, consKi, consKd);
   else 
    PIDRight.SetTunings(aggKp, aggKi, aggKd);
   PIDRight.Compute();
 
   // Stop immediately if target speed is zero
-  if (SpeedLeft == 0)
+  if (speedLeft == 0)
   {
     SpeedCmdLeft = 0;
     initialTime = micros();
     lastTime = initialTime;
   }
-  if (SpeedRight == 0)
+  if (speedRight == 0)
   {
     SpeedCmdRight = 0;
     initialTime = micros();
