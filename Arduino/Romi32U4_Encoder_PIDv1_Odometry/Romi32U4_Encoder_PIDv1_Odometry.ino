@@ -80,12 +80,12 @@ void setup()
   Serial.begin(9600);
 
   // Set PID controllers command range
-  PIDLeft.setOutputLimits(0, motorsMaxCommand);
-  PIDRight.setOutputLimits(0, motorsMaxCommand);
+  PIDLeft.SetOutputLimits(0, motorsMaxCommand);
+  PIDRight.SetOutputLimits(0, motorsMaxCommand);
 
   // Set PID controllers command range
-  PIDLeft.setMode(AUTOMATIC);
-  PIDRight.setMode(AUTOMATIC);
+  PIDLeft.SetMode(AUTOMATIC);
+  PIDRight.SetMode(AUTOMATIC);
 
   // Initialize time variables
   initialTime = micros();
@@ -168,36 +168,36 @@ void setMotorSpeeds(int speedLeft, int speedRight)
   // get speed command from PID controllers
   //int speedCmdLeft = PIDLeft.getCmdAutoStep(speedLeft, odometer.getSpeedLeft());
   OdoSpeedLeft = odometer.getSpeedLeft();
-  if(abs(speedLeft - OdoSpeedLeft) < accelMax)
+  if(abs(SpeedLeft - OdoSpeedLeft) < accelMax)
    PIDLeft.SetTunings(consKp, consKi, consKd);
   else 
    PIDLeft.SetTunings(aggKp, aggKi, aggKd);
   PIDLeft.Compute();
   //int speedCmdRight = PIDRight.getCmdAutoStep(speedRight, odometer.getSpeedRight());
   OdoSpeedRight = odometer.getSpeedRight();
-    if(abs(speedRight - OdoSpeedRight) < accelMax)
+    if(abs(SpeedRight - OdoSpeedRight) < accelMax)
    PIDRight.SetTunings(consKp, consKi, consKd);
   else 
    PIDRight.SetTunings(aggKp, aggKi, aggKd);
   PIDRight.Compute();
 
   // Stop immediately if target speed is zero
-  if (speedLeft == 0)
+  if (SpeedLeft == 0)
   {
-    speedCmdLeft = 0;
+    SpeedCmdLeft = 0;
     initialTime = micros();
     lastTime = initialTime;
   }
-  if (speedRight == 0)
+  if (SpeedRight == 0)
   {
-    speedCmdRight = 0;
+    SpeedCmdRight = 0;
     initialTime = micros();
     lastTime = initialTime;
   }
 
   // Set motor speeds
-  motors.setSpeeds(speedCmdLeft * leftTrim / 40, speedCmdRight * rightTrim / 40);
+  motors.setSpeeds(SpeedCmdLeft * leftTrim / 40, SpeedCmdRight * rightTrim / 40);
 
-  lastSpeedCmdLeft = speedCmdLeft;
-  lastSpeedCmdRight = speedCmdRight;
+  lastSpeedCmdLeft = SpeedCmdLeft;
+  lastSpeedCmdRight = SpeedCmdRight;
 }
