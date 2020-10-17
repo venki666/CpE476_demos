@@ -1,0 +1,19 @@
+<launch>
+  <node
+    pkg="turtlesim"
+    type="turtlesim_node"
+    name="turtlesim"
+  />
+  <node
+    pkg="turtlesim_cleaner"
+    type="pubvel_with_max"
+    name="publish_velocity"
+  >
+    <param name="max_vel" value="1" />
+  </node>
+  <node
+    pkg="turtlesim_cleaner"
+    type="set_bg_color"
+    name="set_bg_color"
+  />
+</launch>
