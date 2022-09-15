@@ -1,5 +1,5 @@
 # lin_steering
-Steering algorithm using odometry.  
+Steering algorithm using odometry. See mobot dependencies   
 
 If start with good initial conditions, linear steering algorithm will do a good job.
 Can compare feedback controller to open-loop controller.
@@ -8,11 +8,11 @@ Can compare feedback controller to open-loop controller.
 Start up gazebo, load the mobot model, desired-state publisher, desired-state client,
 and linear-steering algorithm.
 ```
-`roslaunch gazebo_ros empty_world.launch`
-`roslaunch mobot_urdf mobot.launch`
-`rosrun mobot_pub_des_state mobot_pub_des_state`
-`rosrun mobot_pub_des_state pub_des_state_path_client`
-`rosrun lin_steering lin_steering_wrt_odom`
+roslaunch gazebo_ros empty_world.launch
+roslaunch mobot_urdf mobot.launch
+rosrun mobot_pub_des_state mobot_pub_des_state
+rosrun mobot_pub_des_state pub_des_state_path_client
+rosrun lin_steering lin_steering_wrt_odom
 ```
 ### Linear Steering with integrated AMCL and (drifty) odometry
 Start up the mobot in the starting pen with:
