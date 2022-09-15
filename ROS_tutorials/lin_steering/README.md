@@ -18,10 +18,12 @@ and linear-steering algorithm.
 Start up the mobot in the starting pen with:
 
 ```roslaunch mobot_urdf mobot_in_pen.launch```
+
 Then launch multiple nodes, including amcl, linear steering with respect to amcl, 
 drifty_odom, rviz, triad-display, and mobot_pub_des_state.  Start these with:
 
 ```roslaunch odom_tf mobot_w_odom_tf.launch```
+
 Then send a desired path, in terms of a sequence of via points, with:
 
 ```rosrun mobot_pub_des_state starting_pen_pub_des_state_path_client```
