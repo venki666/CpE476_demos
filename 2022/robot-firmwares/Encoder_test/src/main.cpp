@@ -1,47 +1,91 @@
-#include <Arduino.h>
-/* Encoder Library - TwoKnobs Example
- * http://www.pjrc.com/teensy/td_libs_Encoder.html
- *
- * This example code is in the public domain.
- */
+#include <Wire.h>
+#include "Grove_Motor_Driver_TB6612FNG.h"
+//#include <Adafruit_SSD1306.h>
 
-#include <Encoder.h>
+// Connect to the two encoder outputs!
+#define ENCODER_A   5
+#define ENCODER_B   7
 
-// Change these pin numbers to the pins connected to your encoder.
-//   Best Performance: both pins have interrupt capability
-//   Good Performance: only the first pin has interrupt capability
-//   Low Performance:  neither pin has interrupt capability
-Encoder knobLeft(5, 6);
-Encoder knobRight(7, 8);
-//   avoid using pins with LEDs attached
+// These let us convert ticks-to-RPM
+#define GEARING     48
+#define ENCODERMULT 16
 
-void setup() {
-  Serial.begin(9600);
-  Serial.println("Two Motor Encoder Test:");
+MotorDriver motor;
+// Create an IntervalTimer object 
+IntervalTimer myTimer;
+
+volatile float pulseA = 0;
+volatile uint32_t lastA = 0;
+volatile float pulseB = 0;
+volatile uint32_t lastB = 0;
+
+void interruptA() {
+
+  uint32_t currA = micros();
+  if (lastA < currA) {
+    // did not wrap around
+    float rev = currA - lastA;  // us
+    pulseA = rev;
+  }
+  lastA = currA;
 }
 
-long positionLeft  = -999;
-long positionRight = -999;
+void interruptB() {
 
+  uint32_t currB = micros();
+  if (lastB < currB) {
+    // did not wrap around
+    float rev = currB - lastB;  // us
+    pulseB = rev;
+  }
+  lastB = currB;
+}
+
+void printpulse() {
+    Serial.print((int)pulseA); Serial.print("\t"); 
+    Serial.println((int)pulseB);
+}
+
+void setup() {
+  Serial.begin(9600);           // set up Serial library at 9600 bps
+  pinMode(ENCODER_A, INPUT);
+  pinMode(ENCODER_A, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(ENCODER_A), interruptA, RISING);
+  pinMode(ENCODER_B , INPUT);
+  pinMode(ENCODER_B, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(ENCODER_B), interruptB, RISING);
+  delay(100);
+  Wire.begin();
+  motor.init();
+
+  myTimer.begin(printpulse, 100000);  // blinkLED to run every 0.1 seconds
+
+  // turn on motor M1
+  motor.dcMotorStop(MOTOR_CHA);
+  motor.dcMotorStop(MOTOR_CHB);
+  
+}
+
+
+
+int i;
 void loop() {
-  long newLeft, newRight;
-  newLeft = knobLeft.read();
-  newRight = knobRight.read();
-  if (newLeft != positionLeft || newRight != positionRight) {
-    Serial.print("Left = ");
-    Serial.print(newLeft);
-    Serial.print(", Right = ");
-    Serial.print(newRight);
-    Serial.println();
-    positionLeft = newLeft;
-    positionRight = newRight;
-  }
-  // if a character is sent from the serial monitor,
-  // reset both back to zero.
-  if (Serial.available()) {
-    Serial.read();
-    Serial.println("Reset both Motor ticks to zero");
-    knobLeft.write(0);
-    knobRight.write(0);
-  }
+ 
+    motor.dcMotorRun(MOTOR_CHA, 200);
+    motor.dcMotorRun(MOTOR_CHB, 200);
+    delay(10000);
+
+
+    motor.dcMotorStop(MOTOR_CHA);
+    motor.dcMotorStop(MOTOR_CHB);
+    delay(1000);
+
+    motor.dcMotorRun(MOTOR_CHA, -200);
+    motor.dcMotorRun(MOTOR_CHB, -200);
+    delay(10000);
+
+    motor.dcMotorStop(MOTOR_CHA);
+    motor.dcMotorStop(MOTOR_CHB);
+    delay(1000);
+
 }
