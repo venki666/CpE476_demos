@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="turtlesim" type="turtlesim_node" name="turtlesim_node" />
+  <node pkg="go_to_goal_turtlesim" type="waypoint_publisher" name="waypoint_publisher" output="screen" />
+  <node pkg="go_to_goal_turtlesim" type="go_to_goal_x_y" name="go_to_goal_x_y" />
+</launch>
