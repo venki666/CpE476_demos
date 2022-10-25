@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="turtlesim" type="turtlesim_node" name="turtlesim_node" />
+  <node pkg="turtlesim_cleaner" type="waypoint_publisher" name="waypoint_publisher" output="screen" />
+  <node pkg="turtlesim_cleaner" type="go_to_goal_x_y" name="go_to_goal_x_y" />
+</launch>
