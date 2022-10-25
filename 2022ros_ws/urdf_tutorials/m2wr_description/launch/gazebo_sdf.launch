@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+<!-- inicia Gazebo con un world vacío -->
+<include file="$(find gazebo_ros)/launch/empty_world.launch">
+  <arg name="world_name" value="$(find m2wr_description)/urdf/my2wr.sdf"/>
+  <arg name="debug" value="false" />
+  <arg name="gui" value="true" />
+  <arg name="paused" value="false"/>
+  <arg name="use_sim_time" value="true"/>
+  <arg name="headless" value="false"/>
+</include>
+
+<!-- inicia spawner -->
+<include file="$(find m2wr_description)/launch/spawn.sdf.launch">
+</include>
+
+</launch>
