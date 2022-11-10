@@ -1,5 +1,10 @@
 # About RPLIDAR
 
+## First Read this
+RPLIDAR WIKI: http://wiki.ros.org/rplidar
+
+RPLIDAR VENDOR: https://www.slamtec.com/en
+
 ***
    RPLIDAR is a low cost 2D LIDAR solution developed by RoboPeak Team, SlamTec company. It can scan 360° environment within 6meter radius. The output of RPLIDAR is very suitable to build map, do slam, or build 3D model.
 >    You can know more information aboud rplidar from SlamTec HomePage(http://www.slamtec.com/en).
