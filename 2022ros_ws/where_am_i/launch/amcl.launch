@@ -1,0 +1,28 @@
+<launch>
+	<!-- Map Server Node node -->
+	<arg name="map_file" default="$(find where_am_i)/maps/my_map.yaml"/>
+	<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+	<!-- AMCL node -->
+	<node name="amcl" pkg="amcl" type="amcl" output="screen">
+		  <!-- <remap from="scan" to="where_am_i/laser/scan"/> -->
+		  <param name="odom_frame_id" value="odom"/>
+		  <param name="odom_model_type" value="diff-corrected"/>
+		  <param name="base_frame_id" value="robot_footprint"/>
+		  <param name="global_frame_id" value="map"/>
+		  
+		  <!-- If you choose to define initial pose here -->
+		  <param name="initial_pose_x" value="-7.65"/>
+		  <param name="initial_pose_y" value="-2.46"/>
+  	</node>
+	<!-- Move Base node -->
+	<node name="move_base" pkg="move_base" type="move_base" respawn="false" output="screen">
+		<!-- <remap from="scan" to="where_am_i/laser/scan"/> -->
+		<param name="base_global_planner" value="navfn/NavfnROS" />
+  		<param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>
+  		<rosparam file="$(find where_am_i)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+		<rosparam file="$(find where_am_i)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+		<rosparam file="$(find where_am_i)/config/local_costmap_params.yaml" command="load" />
+		<rosparam file="$(find where_am_i)/config/global_costmap_params.yaml" command="load" />
+		<rosparam file="$(find where_am_i)/config/base_local_planner_params.yaml" command="load" />
+	</node>
+</launch>
