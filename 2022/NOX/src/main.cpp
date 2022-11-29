@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <SPI.h>
 #include <Adafruit_MotorShield.h>
 #include <Wire.h>
 #include <PID_v1.h>
@@ -14,6 +13,8 @@
 const byte noCommLoopMax = 10;                //number of main loops the robot will execute without communication before stopping
 unsigned int noCommLoops = 0;                 //main loop without communication counter
 
+char log_msg[50];
+char result[8];
 double speed_cmd_left2 = 0;      
 
 const int PIN_ENCOD_A_MOTOR_LEFT = 5;               //A channel for encoder of left motor                    
@@ -22,16 +23,11 @@ const int PIN_ENCOD_B_MOTOR_LEFT = 6;               //B channel for encoder of l
 const int PIN_ENCOD_A_MOTOR_RIGHT = 7;              //A channel for encoder of right motor         
 const int PIN_ENCOD_B_MOTOR_RIGHT = 8;              //B channel for encoder of right motor 
 
-const int PIN_SIDE_LIGHT_LED = 13;                  //Side light blinking led pin
+const int PIN_SIDE_LIGHT_LED = 46;                  //Side light blinking led pin
 
 unsigned long lastMilli = 0;
-
-//--- Robot-specific constants ---
 const double radius = 0.0325;                   //Wheel radius, in m
 const double wheelbase = 0.145;               //Wheelbase, in m
-const double encoder_cpr = 1024;               //Encoder ticks or counts per rotation
-const double speed_to_pwm_ratio = 0.00235;    //Ratio to convert speed (in m/s) to PWM value. It was obtained by plotting the wheel speed in relation to the PWM motor command (the value is the slope of the linear function).
-const double min_speed_cmd = 0.0882;          //(min_speed_cmd/speed_to_pwm_ratio) is the minimum command value needed for the motor to start moving. This value was obtained by plotting the wheel speed in relation to the PWM motor command (the value is the constant of the linear function).
 
 double speed_req = 0;                         //Desired linear speed for the robot, in m/s
 double angular_speed_req = 0;                 //Desired angular speed for the robot, in rad/s
@@ -89,6 +85,16 @@ int lightT = 0; //init light period
 
 //__________________________________________________________________________
 
+//Publish function for odometry, uses a vector type message to send the data (message type is not meant for that but that's easier than creating a specific message type)
+void publishSpeed(double time) {
+  speed_msg.header.stamp = nh.now();      //timestamp for odometry data
+  speed_msg.vector.x = speed_act_left;    //left wheel speed (in m/s)
+  speed_msg.vector.y = speed_act_right;   //right wheel speed (in m/s)
+  speed_msg.vector.z = time/1000;         //looptime, should be the same as specified in LOOPTIME (in s)
+  speed_pub.publish(&speed_msg);
+  nh.spinOnce();
+  nh.loginfo("Publishing odometry");
+}
 
 //Left motor encoder counter
 void encoderLeftMotor() {
@@ -100,17 +106,6 @@ void encoderLeftMotor() {
 void encoderRightMotor() {
   if (digitalRead(PIN_ENCOD_A_MOTOR_RIGHT) == digitalRead(PIN_ENCOD_B_MOTOR_RIGHT)) pos_right--;
   else pos_right++;
-}
-
-//Publish function for odometry, uses a vector type message to send the data (message type is not meant for that but that's easier than creating a specific message type)
-void publishSpeed(double time) {
-  speed_msg.header.stamp = nh.now();      //timestamp for odometry data
-  speed_msg.vector.x = speed_act_left;    //left wheel speed (in m/s)
-  speed_msg.vector.y = speed_act_right;   //right wheel speed (in m/s)
-  speed_msg.vector.z = time/1000;         //looptime, should be the same as specified in LOOPTIME (in s)
-  speed_pub.publish(&speed_msg);
-  nh.spinOnce();
-  nh.loginfo("Publishing odometry");
 }
 
 template <typename T> int sgn(T val) {
@@ -188,23 +183,22 @@ void loop() {
       speed_act_left = 0;
     }
     else {
-      speed_act_left=((pos_left/encoder_cpr)*2*PI)*(1000/LOOPTIME)*radius;           // calculate speed of left wheel
+      speed_act_left=((pos_left/990)*2*PI)*(1000/LOOPTIME)*radius;           // calculate speed of left wheel
     }
     
     if (abs(pos_right) < 5){                                                  //Avoid taking in account small disturbances
       speed_act_right = 0;
     }
     else {
-    speed_act_right=((pos_right/encoder_cpr)*2*PI)*(1000/LOOPTIME)*radius;          // calculate speed of right wheel
+    speed_act_right=((pos_right/990)*2*PI)*(1000/LOOPTIME)*radius;          // calculate speed of right wheel
     }
     
     pos_left = 0;
     pos_right = 0;
 
     speed_cmd_left = constrain(speed_cmd_left, -max_speed, max_speed);
-    PID_leftMotor.Compute();                                                 
-    // compute PWM value for left motor. Check constant definition comments for more information.
-    PWM_leftMotor = constrain(((speed_req_left+sgn(speed_req_left)*min_speed_cmd)/speed_to_pwm_ratio) + (speed_cmd_left/speed_to_pwm_ratio), -255, 255); //
+    PID_leftMotor.Compute();                                                 // compute PWM value for left motor
+    PWM_leftMotor = constrain(((speed_req_left+sgn(speed_req_left)*0.0882)/0.00235) + (speed_cmd_left/0.00235), -255, 255); //
     
     if (noCommLoops >= noCommLoopMax) {                   //Stopping if too much time without command
       leftMotor->setSpeed(0);
@@ -224,9 +218,8 @@ void loop() {
     }
     
     speed_cmd_right = constrain(speed_cmd_right, -max_speed, max_speed);    
-    PID_rightMotor.Compute();                                                 
-    // compute PWM value for right motor. Check constant definition comments for more information.
-    PWM_rightMotor = constrain(((speed_req_right+sgn(speed_req_right)*min_speed_cmd)/speed_to_pwm_ratio) + (speed_cmd_right/speed_to_pwm_ratio), -255, 255); // 
+    PID_rightMotor.Compute();                                                 // compute PWM value for right motor
+    PWM_rightMotor = constrain(((speed_req_right+sgn(speed_req_right)*0.0882)/0.00235) + (speed_cmd_right/0.00235), -255, 255); // 
 
     if (noCommLoops >= noCommLoopMax) {                   //Stopping if too much time without command
       rightMotor->setSpeed(0);
@@ -257,4 +250,3 @@ void loop() {
     publishSpeed(LOOPTIME);   //Publish odometry on ROS topic
   }
  }
-
