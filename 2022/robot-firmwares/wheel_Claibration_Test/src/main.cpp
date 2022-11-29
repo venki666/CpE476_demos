@@ -8,13 +8,13 @@
  */
  
 // Encoder output to Arduino Interrupt pin. Tracks the tick count.
-#define ENC_IN_LEFT_A 5
-#define ENC_IN_RIGHT_A 7
+#define ENC_IN_LEFT_A 7
+#define ENC_IN_RIGHT_A 5
  
 // Other encoder output to Arduino to keep track of wheel direction
 // Tracks the direction of rotation.
-#define ENC_IN_LEFT_B 6
-#define ENC_IN_RIGHT_B 8
+#define ENC_IN_LEFT_B 8
+#define ENC_IN_RIGHT_B 6
  
 // True = Forward; False = Reverse
 boolean Direction_left = true;
@@ -43,13 +43,15 @@ void setup() {
   Serial.begin(9600); 
  
   // Set pin states of the encoder
-  pinMode(ENC_IN_LEFT_A , INPUT_PULLUP);
+
   pinMode(ENC_IN_LEFT_A , INPUT);
   pinMode(ENC_IN_LEFT_B , INPUT);
-  pinMode(ENC_IN_RIGHT_A , INPUT_PULLUP);
   pinMode(ENC_IN_RIGHT_A , INPUT);
   pinMode(ENC_IN_RIGHT_B , INPUT);
  
+  pinMode(ENC_IN_LEFT_A , INPUT_PULLUP);
+  pinMode(ENC_IN_RIGHT_A , INPUT_PULLUP);
+
   // Every time the pin goes high, this is a tick
   attachInterrupt(digitalPinToInterrupt(ENC_IN_LEFT_A), left_wheel_tick, RISING);
   attachInterrupt(digitalPinToInterrupt(ENC_IN_RIGHT_A), right_wheel_tick, RISING);
