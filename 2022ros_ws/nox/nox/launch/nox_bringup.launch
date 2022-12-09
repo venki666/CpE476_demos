@@ -6,7 +6,7 @@
 	
 	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
 	
-	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 	
 	<node name="serial_node" pkg="rosserial_python" type="serial_node.py">
 		<param name="port" value="/dev/ttyACM0"/>
@@ -22,10 +22,11 @@
 		<param name="angular_scale_accel" value="0.0" />
 	</node>	
 	
-				<!--  ************** Sensors ***************  -->
+				<!--  ************** Sensors ***************  
 	<include file="$(find freenect_launch)/launch/freenect.launch" />
 	<node name="depthimage_to_laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan">
 		<remap from="image" to="camera/depth/image_raw" />
-	</node>
+	</node> 
+	-->
 	
 </launch>
