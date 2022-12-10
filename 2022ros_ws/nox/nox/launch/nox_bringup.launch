@@ -22,11 +22,14 @@
 		<param name="angular_scale_accel" value="0.0" />
 	</node>	
 	
-				<!--  ************** Sensors ***************  
-	<include file="$(find freenect_launch)/launch/freenect.launch" />
-	<node name="depthimage_to_laserscan" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan">
-		<remap from="image" to="camera/depth/image_raw" />
-	</node> 
-	-->
+				<!--  ************** Sensors ***************  -->
+	  <node name="rplidarNode"          pkg="rplidar_ros"  type="rplidarNode" output="screen">
+	  <param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
+	  <param name="serial_baudrate"     type="int"    value="115200"/><!--A1/A2 -->
+	  <!--param name="serial_baudrate"     type="int"    value="256000"--><!--A3 -->
+	  <param name="frame_id"            type="string" value="laser"/>
+	  <param name="inverted"            type="bool"   value="false"/>
+	  <param name="angle_compensate"    type="bool"   value="true"/>
+	  </node>
 	
 </launch>
