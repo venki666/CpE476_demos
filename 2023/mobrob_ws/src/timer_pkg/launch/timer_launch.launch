@@ -1,0 +1,4 @@
+<launch>
+  <node name="timer_cpp_node" pkg="timer_pkg" type="timer_cpp_node" output="screen"/>
+  <node name="timer_py_node" pkg="timer_pkg" type="timer_py_node.py" output="screen"/>
+</launch>
