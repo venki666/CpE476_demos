@@ -1,0 +1,22 @@
+<launch>
+  <arg
+    name="addturtle"
+    default="0"
+  />
+  <node
+    pkg="turtlesim"
+    type="turtlesim_node"
+    name="turtlesim"
+  />
+  <node
+    pkg="turtle_ros_service"
+    type="improved_pubvel_toggle"
+    name="improved_pubvel_toggle"
+    launch-prefix="xterm -e"
+  />
+  <node if="$(eval addturtle==1)"
+    pkg="turtle_ros_service"
+    type="spawn_turtle_plus"
+    name="spawn_turtle_plus"
+  />
+</launch>

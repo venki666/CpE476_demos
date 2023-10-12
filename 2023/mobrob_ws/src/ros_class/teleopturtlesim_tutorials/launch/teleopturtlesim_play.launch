@@ -1,0 +1,17 @@
+<launch>
+  <arg
+    name="filename"
+  />
+  <node
+    pkg="turtlesim"
+    type="turtlesim_node"
+    name="turtlesim"
+    respawn="true"
+  />
+  <node
+    pkg="rosbag"
+    type="play"
+    name="play"
+    args="$(arg filename)"
+  />
+</launch>

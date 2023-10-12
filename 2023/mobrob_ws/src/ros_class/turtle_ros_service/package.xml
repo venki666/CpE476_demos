@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package  format="2">
+  <name>turtle_ros_service</name>
+  <version>0.0.1</version>
+  <description>
+    Examples from A Gentle Introduction to ROS
+  </description>
+  <maintainer email="jokane@cse.sc.edu">
+    Jason O'Kane
+  </maintainer>
+  <license>TODO</license>
+ 
+  <buildtool_depend>catkin</buildtool_depend> 
+  
+  <depend>message_generation</depend>
+  <build_export_depend>message_runtime</build_export_depend>
+  <exec_depend>message_runtime</exec_depend>
+
+  <depend>std_msgs</depend>
+  <depend>roscpp</depend>   
+  <depend>turtlesim</depend>   
+  <depend>geometry_msgs</depend>   
+</package>

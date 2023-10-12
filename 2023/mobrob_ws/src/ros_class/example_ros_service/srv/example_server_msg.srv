@@ -1,0 +1,6 @@
+string name
+---
+bool on_the_list
+bool good_class
+int32 numstuds
+string nickname

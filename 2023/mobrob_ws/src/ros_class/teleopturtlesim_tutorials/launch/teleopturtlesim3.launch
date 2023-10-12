@@ -1,0 +1,15 @@
+<launch>
+  <arg 
+    name="monitorpose"
+    default="0"
+  />
+  <include
+    file="$(find teleopturtlesim_tutorials)/launch/teleopturtlesim.launch"
+  />
+  <node if="$(arg monitorpose)"
+    pkg="teleopturtlesim_tutorials"
+    type="subpose"
+    name="pose_subscriber"
+    output="screen"
+  />
+</launch>

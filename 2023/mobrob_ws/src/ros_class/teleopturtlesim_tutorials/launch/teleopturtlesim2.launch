@@ -1,0 +1,11 @@
+<launch>
+  <include
+    file="$(find teleopturtlesim_tutorials)/launch/teleopturtlesim.launch"
+  />
+  <node
+    pkg="teleopturtlesim_tutorials"
+    type="subpose"
+    name="pose_subscriber"
+    output="screen"
+  />
+</launch>
