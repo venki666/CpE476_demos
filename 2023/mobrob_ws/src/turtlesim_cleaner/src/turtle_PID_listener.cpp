@@ -1,148 +1,14 @@
 #include "ros/ros.h"
+
 #include "turtlesim/Pose.h"
 
-#include "geometry_msgs/Twist.h"
-
-#include <math.h>
-
-using namespace std;
-
-class PID{
-    private:
-        ros::NodeHandle n;
-        ros::Publisher pose_pub;
-        ros::Subscriber pose_sub;
-
-        turtlesim::Pose gpose;
-        turtlesim::Pose cpose;
-        geometry_msgs::Twist cd_vel;
-        
-        float k1=7.5,k2=0.00001,k3=0.01; 
-
-    public:
-        PID();
-
-        void PoseCallback(const turtlesim::Pose& pose){
-            cpose = pose;
-        }
-
-        void getGoalPose(){
-            cout<<"\n Enter a goal pose ";
-            cin>>gpose.x>>gpose.y>>gpose.theta;  
-        }
-
-        float deg2rad(float ang){
-            return (M_PI * ang)/180.0;
-        }
-
-        float rad2deg(float ang){
-            return (180 * ang)/M_PI;
-        }
-
-        float getDistance(){
-            return sqrt(pow((cpose.x - gpose.x),2) + pow((cpose.y - gpose.y),2));
-        }
-
-        float getAngle1(){
-            return ((atan2(gpose.y - cpose.y, gpose.x - cpose.x)) - cpose.theta);
-        }
-
-        float getAngle2(){
-            return gpose.theta - cpose.theta;
-        }
-
-        void PID1(){ //takes to desired x,y goal pose
-
-            float integral_theta = 0;
-            float diff_theta = 0;
-            float integral_dist = 0;
-            float diff_dist = 0;
-            
-            float e_ang = getAngle1();
-            float e_dist = getDistance(); 
-
-            while //(abs(e_ang) >= deg2rad(1)) /*current pose and delta_rot_1 + 2*/ 
-                   (abs(e_dist) >= 0.05) //dist
-            {
-                
-                cout<<"\n Current Pose x is "<<cpose.x <<" y is"<<cpose.y<<" \n";
-                cd_vel.angular.z = (k1*e_ang) + (k2*integral_theta) + (k3*diff_theta);
-                cd_vel.angular.y = 0;
-                cd_vel.angular.x = 0;
-
-                cd_vel.linear.x = (k1*e_dist / 20.0) + (k2*integral_dist) + (k3*diff_dist);
-                cd_vel.linear.y = 0;
-                cd_vel.linear.z = 0;
-
-                e_ang = getAngle1();
-                e_dist = getDistance();
-
-                integral_theta += e_ang;
-                integral_dist += e_dist;
-
-                diff_dist = e_dist - diff_dist;
-                diff_theta = e_ang - diff_theta;
-                pose_pub.publish(cd_vel);
-                
-
-                ros::spinOnce();
-                /* code */
-            }
-            
-        }
-
-        void PID2(){
-            float integral_theta = 0;
-            float diff_theta = 0;
-            
-            float e_ang = getAngle2();
-
-            while (abs(e_ang) >= deg2rad(1))
-            {
-                cout<<"\n Current Pose theta is "<<rad2deg(cpose.theta);
-                cd_vel.angular.z = (k1*e_ang / 4.0) + (k2*integral_theta) + (k3*diff_theta);
-                cd_vel.angular.y = 0;
-                cd_vel.angular.x = 0;
-
-                cd_vel.linear.x = 0;
-                cd_vel.linear.y = 0;
-                cd_vel.linear.z = 0;
-
-                e_ang = getAngle2();
-                integral_theta += e_ang;
-                diff_theta = e_ang - diff_theta;
-                
-                pose_pub.publish(cd_vel);
-                ros::spinOnce();                
-            }
-            
-        }
-};
-
-PID::PID(){
-    pose_sub = n.subscribe("/turtle1/pose",1000, &PID::PoseCallback,this);
-    pose_pub = n.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel",1000);
-
-    ros::Rate loop_rate(10);
-    
-    while (ros::ok())
-    {
-        getGoalPose();
-
-        PID::PID1();
-        PID::PID2();
-
-        ros::spinOnce();
-
-        loop_rate.sleep();
-    
-    }
-
+//to hear turtlesim pose 
+void PoseCallback(const turtlesim::Pose& Pose)
+{
+  ROS_INFO("I heard: x = [%f], y = [%f], theta = [%f], lv = [%f] ,av=[%f]"
+  , Pose.x,Pose.y,Pose.theta,Pose.linear_velocity,Pose.angular_velocity);
 }
 
-/**
- * This tutorial demonstrates simple sending of messages over the ROS system.
- */
 int main(int argc, char **argv)
 {
   /**
@@ -155,14 +21,38 @@ int main(int argc, char **argv)
    * You must call one of the versions of ros::init() before using any other
    * part of the ROS system.
    */
+  ros::init(argc, argv, "listener");
 
-    ros::init(argc, argv, "pid_turtle_pose_send_node");
+  /**
+   * NodeHandle is the main access point to communications with the ROS system.
+   * The first NodeHandle constructed will fully initialize this node, and the last
+   * NodeHandle destructed will close down the node.
+   */
+  ros::NodeHandle n;
 
-    
+  /**
+   * The subscribe() call is how you tell ROS that you want to receive messages
+   * on a given topic.  This invokes a call to the ROS
+   * master node, which keeps a registry of who is publishing and who
+   * is subscribing.  Messages are passed to a callback function, here
+   * called chatterCallback.  subscribe() returns a Subscriber object that you
+   * must hold on to until you want to unsubscribe.  When all copies of the Subscriber
+   * object go out of scope, this callback will automatically be unsubscribed from
+   * this topic.
+   *
+   * The second parameter to the subscribe() function is the size of the message
+   * queue.  If messages are arriving faster than they are being processed, this
+   * is the number of messages that will be buffered up before beginning to throw
+   * away the oldest ones.
+   */
+  ros::Subscriber sub = n.subscribe("/turtle1/pose", 1000, PoseCallback);
 
-    // ros::Rate loop_rate(10);    
-    
-    PID pid;   
+  /**
+   * ros::spin() will enter a loop, pumping callbacks.  With this version, all
+   * callbacks will be called from within this thread (the main one).  ros::spin()
+   * will exit when Ctrl-C is pressed, or the node is shutdown by the master.
+   */
+  ros::spin();
 
   return 0;
 }
