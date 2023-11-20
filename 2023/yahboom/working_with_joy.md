@@ -44,6 +44,7 @@ To install jstest enter the following command in the terminal
 `$ sudo apt-get install jstest-gtk`
 
 Once installed you can start jstest from your terminal by entering the following command below, or from your menu
+
 `$ jstest-gtk & `
 
 Play around and claibrate the joy_stick.
