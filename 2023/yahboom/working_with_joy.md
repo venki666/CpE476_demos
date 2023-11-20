@@ -12,6 +12,7 @@ headless sytem.
 
 Install ds4dr: 
 `$sudo pip install ds4drv`
+
 Check BLE dongle:
 `$lsusb`
 
@@ -20,10 +21,14 @@ Install ros-joy: http://wiki.ros.org/joy - assume working on jenson nano running
 Go into pairing mode with PS4: Playstation button + share button for ~5 sec
 Run 
 `$ds4drv` from command line to connect to PS4
+
 This will output something like _Created devices /dev/input/jsX
 remember /dev/input/js__X__ and update the launch file (default X=0)
+
 `$sudo chmod a+rw /dev/input/jsX`
+
 `$ls /dev/input/`
+
 Test Joy
 `$ sudo jstest /dev/input/jsX`
 
@@ -33,14 +38,20 @@ To install jstest enter the following command in the terminal
 
 Once installed you can start jstest from your terminal by entering the following command below, or from your menu
 `$ jstest-gtk & `
+
 Play around and claibrate the joy_stick
 
 Ros runs:run commands in seperate terminals
 `$ds4drv if it is not running already.`
+
 `$ roscore `
+
 `$ rosparam set joy_node/dev "/dev/input/jsX"`
+
 `$ rosrun joy joy_node`
+
 `$ rosrun ps4_ros ps4_ros`
+
 `$ rostopic echo joy`
 
 
