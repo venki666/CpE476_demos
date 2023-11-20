@@ -36,12 +36,12 @@ Once installed you can start jstest from your terminal by entering the following
 Play around and claibrate the joy_stick
 
 Ros runs:run commands in seperate terminals
-`$ds4drv if it is not running already.
-$ roscore 
-$ rosparam set joy_node/dev "/dev/input/jsX"
-$ rosrun joy joy_node
-$ rosrun ps4_ros ps4_ros
-$ rostopic echo joy`
+`$ds4drv if it is not running already.`
+`$ roscore `
+`$ rosparam set joy_node/dev "/dev/input/jsX"`
+`$ rosrun joy joy_node`
+`$ rosrun ps4_ros ps4_ros`
+`$ rostopic echo joy`
 
 
 
