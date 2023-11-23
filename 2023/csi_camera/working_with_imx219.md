@@ -51,7 +51,9 @@ View the image by using the following command in a new twerminal
 ```
 rqt_image_view 
 ```
-Camera Calibration
+### Camera Calibration
+Install camera calibration following instructions at http://wiki.ros.org/camera_calibration/Tutorials/MonocularCalibration
+
 The jetson_csi_cam package is set up to make camera calibration very simple. To calibrate your camera, all you need to do is follow the monocular camera calibration guide on the ROS wiki, with the following notes:
 
 As the guide states, you'll need a printout of a chessboard. If you want something quick, use this chessboard for 8.5"x11" paper with an 8x6 grid. Please note: while there are nine by seven squares, we use a size of 8x6 because we are counting the internal vertices. You will need to measure the square size yourself since printing will slightly distort the chessboard size, but the squares should be 30mm on each side.
