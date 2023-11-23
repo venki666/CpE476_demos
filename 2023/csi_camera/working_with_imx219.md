@@ -44,10 +44,21 @@ compile the workspace and execute the node by using the command to publish the c
 ```
 roslaunch jetson_csi_cam jetson_csi_cam.launch width:=<image width> height:=<image height> fps:=<desired framerate>
 ```
+```
 roslaunch jetson_csi_cam jetson_csi_cam.launch width:=3840 height:=2160 fps:=15
 ```
 View the image by using the following command in a new twerminal
 ```
 rqt_image_view 
 ```
+Camera Calibration
+The jetson_csi_cam package is set up to make camera calibration very simple. To calibrate your camera, all you need to do is follow the monocular camera calibration guide on the ROS wiki, with the following notes:
 
+As the guide states, you'll need a printout of a chessboard. If you want something quick, use this chessboard for 8.5"x11" paper with an 8x6 grid. Please note: while there are nine by seven squares, we use a size of 8x6 because we are counting the internal vertices. You will need to measure the square size yourself since printing will slightly distort the chessboard size, but the squares should be 30mm on each side.
+
+In Step 2, make sure to start the camera via roslaunch as discussed above.
+
+In Step 3, make sure to set your image and camera arguments correctly as below, also make sure that the chessboard size and square size are set correctly for your chessboard.
+```
+rosrun camera_calibration cameracalibrator.py --size 8x6 --square <square size in meters> image:=/csi_cam/image_raw camera:=/csi_cam
+```
