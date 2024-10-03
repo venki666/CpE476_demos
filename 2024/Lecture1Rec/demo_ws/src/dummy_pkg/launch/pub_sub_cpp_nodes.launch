@@ -1,0 +1,5 @@
+<launch>
+  <node name="pub_cpp_node" pkg="dummy_pkg" type="pub_cpp_node" output="screen"/>
+  <node name="sub_cpp_node" pkg="dummy_pkg" type="sub_cpp_node" output="screen"/>
+  <node name="sub_py_node" pkg="dummy_pkg" type="sub_py_node.py" output="screen"/>
+</launch>
