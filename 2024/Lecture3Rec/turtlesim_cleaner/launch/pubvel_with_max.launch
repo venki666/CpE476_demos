@@ -1,0 +1,5 @@
+<launch>
+	<node pkg="turtlesim_cleaner" type="pubvel_with_max" name="publish_velocity" >
+		<param name="max_vel" value="3" />
+	</node>
+</launch>

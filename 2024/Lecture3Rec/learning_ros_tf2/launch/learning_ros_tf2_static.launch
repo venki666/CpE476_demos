@@ -1,0 +1,3 @@
+<launch>
+<node pkg="learning_ros_tf2" type="static_turtle_tf2_broadcaster" name="mystaticturtle" args="1 0 0 0 0 0 1 link1_parent link1" />
+</launch>
