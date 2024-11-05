@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="config" default="urdf"/>
+  <param name="robot_description" textfile="$(find ros_mobile_robot)/urdf/my_mobile_robot.urdf" />
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+  <node name="rviz" pkg="rviz" type="rviz" required="true" args="-d $(find ros_mobile_robot)/urdf/$(arg config).rviz"/>
+
+    <!-- Launch an empty world in Gazebo -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="recording" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+  
+  <!-- Push robot_description to factory and spawn robot in Gazebo -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
+        args="-z 0.0 -unpause -urdf -model robot -param robot_description" respawn="false" output="screen" />
+</launch>
