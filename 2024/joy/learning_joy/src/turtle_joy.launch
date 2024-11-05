@@ -1,0 +1,15 @@
+<launch>
+
+  <!-- Turtlesim Node-->
+  <node pkg="turtlesim" type="turtlesim_node" name="turtlesim"/>
+
+  <!-- joystick node -->
+  <node pkg="joy" type="joy_node" name="joy_node" />
+
+  <!-- joy node -->
+  <node pkg="learning_joy" type="turtle_teleop_joy" name="turtle_teleop_joy_node"/>
+ <node pkg="learning_joy" type="teleop_3d" name="teleop_3d_node"/>
+  <!-- rviz -->
+  <node name="teleop_rviz" pkg="rviz" type="rviz" output="screen" args="-d $(find learning_joy)/config/teleop_3d.rviz" />
+
+</launch>
